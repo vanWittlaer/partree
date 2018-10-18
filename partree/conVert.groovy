@@ -2,9 +2,12 @@
 ** partree - Calculate the functional size of user requirements to a 
 **  software system.
 **
+** Copyright © 2016 Frank Hartel, Splitblue Hartel Software, e-Mail: splitblue@outlook.com
+** for partree itself:
 ** Copyright © 2014 Geert van Wittlaer, Email geert.wittlaer@gmx.de
 **
-** This file is part of partree.
+** This file is part of partree. It was enhanced by Frank Hartel with the capability
+** to show graphical Icons related to the Type and Enhancement 
 **
 ** partree is free software: you can redistribute it and/or modify
 ** it under the terms of the GNU General Public License as published by
@@ -26,18 +29,24 @@
 ** conVert - This script converts a baseline into an enhancement count and
 **   vice-versa.
 **
-** Version 0.5.0 (compatible with Freemind 1.0.1)
+** Version 1.0.0 (compatible with Freemind 1.0.1)
 **
 */
+
 
 def conVert2Baseline(child, tbdStack) {
 /*
 ** Converts an enhancement count into a baseline
 */
+    def iconEO=new freemind.modes.MindIcon("EO_C");
+    def iconEI=new freemind.modes.MindIcon("EI_C");
+    def iconEQ=new freemind.modes.MindIcon("EQ_C");
+    def iconILF=new freemind.modes.MindIcon("ILF_C");
+    def iconEIF=new freemind.modes.MindIcon("EIF_C");
 
 	if (!child.children) {
 		/* Transactions & Files */
-						
+		while(c.removeLastIcon(child)>0);			
 		switch (child.getAttribute("Type")) {
 			case "EI": 
 			case "EQ": 
@@ -52,7 +61,28 @@ def conVert2Baseline(child, tbdStack) {
 				if (child.getAttribute("Enhancement") == "delete") {
 					tbdStack.push(child);
 				} else {
-					c.editAttribute(child, "Enhancement", null);			
+					c.editAttribute(child, "Enhancement", null);	
+						switch (child.getAttribute("Type")) {
+							case "EI":
+								c.addIcon(child,iconEI);
+								break;
+							case "EO":
+								c.addIcon(child,iconEO);
+								break;
+							case "EQ":
+								c.addIcon(child,iconEQ);
+								break;
+							case "ILF":
+								c.addIcon(child,iconILF);
+								break;
+							case "EIF":
+								c.addIcon(child,iconEIF);
+								break;			
+							case "NOT COUNTED":
+								break;			
+							default:
+								break;
+						} 
 				}
 				break;				
 			default: 
@@ -78,7 +108,7 @@ def conVert2Enhancement(child) {
 /*
 ** Converts baseline or development count into an enhancment count
 */
-
+	def iconNONE=new freemind.modes.MindIcon("none_C");
 	if (!child.children) {
 		/* Transactions & Files */
 						
@@ -88,7 +118,8 @@ def conVert2Enhancement(child) {
 			case "EO": 
 			case "ILF": 
 			case "EIF":
-				c.editAttribute(child, "Enhancement", "none");			
+				c.editAttribute(child, "Enhancement", "none");	
+				c.addIcon(child,iconNONE);
 				break;				
 			default: 
 				/* If it is a leaf but type is undefined it is a component leaf */
@@ -97,7 +128,6 @@ def conVert2Enhancement(child) {
 		
 	} else {
 		/* Components */
-
 		/* Loop over all Children */
 		def it = child.childrenUnfolded();		
 		while(it.hasNext()) { 
@@ -123,7 +153,16 @@ def panePartree(sQuestion, sTitle) {
 
 import groovy.swing.SwingBuilder;
 import javax.swing.*;
+import static java.util.Calendar.*
+import java.text.SimpleDateFormat
 
+
+def cal = Calendar.getInstance(TimeZone.getTimeZone('Europe/Berlin'))
+def date = cal.time
+def dateToString = new SimpleDateFormat('yyyy-MM-dd').format(date)
+
+def userName= System.getProperty("user.name")
+def iconSP=new freemind.modes.MindIcon("splitblue");
 
 def rootNode = c.getRootNode();
 
@@ -138,8 +177,15 @@ switch (rootNode.getAttribute("CountType")) {
 
 			conVert2Enhancement(rootNode);			
 			c.editAttribute(rootNode, "CountType", "Enhancement");
-			c.nodeStructureChanged(rootNode);		
-		
+			c.editAttribute(rootNode, "Method", "Rapid, ISO/IEC 20926:2010");
+			c.editAttribute(rootNode, "Purpose", "t.b.d.");
+			c.editAttribute(rootNode, "Date", dateToString);
+			c.editAttribute(rootNode, "FP Analyst", userName);
+			c.editAttribute(rootNode, "Lifecycle", "t.b.d.");
+			c.editAttribute(rootNode, "SizeAdd",null);
+			c.editAttribute(rootNode, "SizeChg",null);
+			c.editAttribute(rootNode, "SizeDel",null);
+			c.nodeStructureChanged(rootNode);	
 		}	
 		
 		break;
@@ -165,6 +211,14 @@ switch (rootNode.getAttribute("CountType")) {
 			}
 			
 			c.editAttribute(rootNode, "CountType", "Baseline");		
+			c.editAttribute(rootNode, "Method", "Rapid, ISO/IEC 20926:2010");		
+			c.editAttribute(rootNode, "Purpose", "t.b.d.");
+			c.editAttribute(rootNode, "Date", dateToString);
+			c.editAttribute(rootNode, "FP Analyst", userName);
+			c.editAttribute(rootNode, "Lifecycle", "t.b.d.");
+			c.editAttribute(rootNode, "SizeAdd",null);
+			c.editAttribute(rootNode, "SizeChg",null);
+			c.editAttribute(rootNode, "SizeDel",null);
 			c.nodeStructureChanged(rootNode);
 		
 		}
@@ -178,7 +232,16 @@ switch (rootNode.getAttribute("CountType")) {
 	
 		if (panePartree(sQuestion, sTitle) == JOptionPane.OK_OPTION) {		
 			c.editAttribute(rootNode, "CountType", "Baseline");	
+			c.editAttribute(rootNode, "Method", "Rapid, ISO/IEC 20926:2010");		
+			c.editAttribute(rootNode, "Purpose", "t.b.d.");
+			c.editAttribute(rootNode, "Date", dateToString);
+			c.editAttribute(rootNode, "FP Analyst", userName);
+			c.editAttribute(rootNode, "Lifecycle", "t.b.d.");
+			c.editAttribute(rootNode, "SizeAdd",null);
+			c.editAttribute(rootNode, "SizeChg",null);
+			c.editAttribute(rootNode, "SizeDel",null);
 			c.nodeStructureChanged(rootNode);	
+			
 		}
 		break;
 }

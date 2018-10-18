@@ -2,9 +2,12 @@
 ** partree - Calculate the functional size of user requirements to a 
 **  software system.
 **
+** Copyright © 2016 Frank Hartel, Splitblue Hartel Software, e-Mail: splitblue@outlook.com
+** for partree itself:
 ** Copyright © 2014 Geert van Wittlaer, Email geert.wittlaer@gmx.de
 **
-** This file is part of partree.
+** This file is part of partree. It was enhanced by Frank Hartel with the capability
+** to show graphical Icons related to the Type and Enhancement 
 **
 ** partree is free software: you can redistribute it and/or modify
 ** it under the terms of the GNU General Public License as published by
@@ -25,40 +28,77 @@
 **
 ** toggleType - This script toggles the transaction/file type for leafs.
 **
-** Version 0.5.0
+** Version 1.0.0
 **
 */
 
-def current = c.getSelected();
+def allCurrent=c.getSelecteds();
+for (int z=0;z<allCurrent.size();z++){
+	   
+	def current = allCurrent.get(z);
+	
+	def iconEO=new freemind.modes.MindIcon("EO_C");
+	def iconEI=new freemind.modes.MindIcon("EI_C");
+	def iconEQ=new freemind.modes.MindIcon("EQ_C");
+	def iconILF=new freemind.modes.MindIcon("ILF_C");
+	def iconEIF=new freemind.modes.MindIcon("EIF_C");
+	def iconADD=new freemind.modes.MindIcon("add_C");
+	def iconDEL=new freemind.modes.MindIcon("del_C");
+	def iconCHANGE=new freemind.modes.MindIcon("change_C");
+	def iconNONE=new freemind.modes.MindIcon("none_C");
 
-if (!current.children) {
-	switch (current.getAttribute("Type")) {
-		case "EI":
-			c.editAttribute(current, "Type", "EO");
-			break;
-		case "EO":
-			c.editAttribute(current, "Type", "EQ");
-			break;
-		case "EQ":
-			c.editAttribute(current, "Type", "ILF");
-			break;
-		case "ILF":
-			c.editAttribute(current, "Type", "EIF");
-			break;
-		case "EIF":
-			c.editAttribute(current, "Type", "EI");
-			break;			
-		default:
-			c.editAttribute(current, "Type", "EI");
-			/*
-			** In an enhancement count, default enhancement type to "add" - we just assume
-			** that when we get here, this is a new node (type has not yet been set)
-			*/
-			if (c.getRootNode().getAttribute("CountType") == "Enhancement") {
-				if (current.getAttribute("Enhancement") == null) {
+	if (!current.children) {
+		while(c.removeLastIcon(current)>0);
+		switch (current.getAttribute("Type")) {
+			case "EI":
+				c.editAttribute(current, "Type", "EO");
+				c.addIcon(current,iconEO);
+				break;
+			case "EO":
+				c.editAttribute(current, "Type", "EQ");
+				c.addIcon(current,iconEQ);
+				break;
+			case "EQ":
+				c.editAttribute(current, "Type", "ILF");
+				c.addIcon(current,iconILF);
+				break;
+			case "ILF":
+				c.editAttribute(current, "Type", "EIF");
+				c.addIcon(current,iconEIF);
+				break;
+			case "EIF":
+				c.editAttribute(current, "Type", null);
+				if (c.getRootNode().getAttribute("CountType") == "Enhancement") {
+					c.editAttribute(current, "Enhancement", null);
+				}
+				break;			
+			default:
+				c.editAttribute(current, "Type", "EI");
+				c.addIcon(current,iconEI);
+				if(c.getRootNode().getAttribute("CountType") == "Enhancement") {
 					c.editAttribute(current, "Enhancement", "add");
 				}
+				break;
+		}
+		if (c.getRootNode().getAttribute("CountType") == "Enhancement") {
+			if (current.getAttribute("Enhancement") != null) {
+				switch (current.getAttribute("Enhancement")) {
+					case "none":
+						c.addIcon(current,iconNONE);
+						break;
+					case "change":
+						c.addIcon(current,iconCHANGE);
+						break;
+					case "delete":
+						c.addIcon(current,iconDEL);
+						break;							
+					case "add":
+						c.addIcon(current,iconADD);
+						break;					
+					default:
+						break;
+				}
 			}
-			break;
+		}		
 	}
 }

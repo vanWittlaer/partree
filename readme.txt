@@ -1,27 +1,38 @@
-About partree
-=============
-A set of scripts, programs and tools for creating and viewing functional trees that can be used to visualize and calculate the functional size of user requiremens to a software.
+/*
+** partree - Calculate the functional size of user requirements to a 
+**  software system.
+**
+** Copyright © 2016 Frank Hartel, Splitblue Hartel Software, e-Mail: splitblue@outlook.com
+** for partree itself:
+** Copyright © 2014 Geert van Wittlaer, Email geert.wittlaer@gmx.de
+**
+** This file is part of partree. It was enhanced by Frank Hartel with the capability
+** to show graphical Icons related to the Type and Enhancement 
+**
+** partree is free software: you can redistribute it and/or modify
+** it under the terms of the GNU General Public License as published by
+** the Free Software Foundation, either version 3 of the License, or
+** (at your option) any later version.
+**
+** partree is distributed in the hope that it will be useful,
+** but WITHOUT ANY WARRANTY; without even the implied warranty of
+** MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+** GNU General Public License for more details.
+**
+** You should have received a copy of the GNU General Public License
+** along with partree.  If not, see <http://www.gnu.org/licenses/>.
+**
+*/
 
-Version
-=======
-Version 0.5.0 (compatible with FreeMind 1.0.1)
+/*
+**
+** Plugin for Freemind
+**
+** Version 1.0.0 (compatible with Freemind 1.0.1)
+**
+*/
 
-Copyright & License
-===================
-Copyright Â© 2014 Geert van Wittlaer, Email geert.wittlaer@gmx.de
+Please copy the directory "icons" or its content to your local freemind - user - directory (e.g. on Windows: c:\users\USERNAME\.freemind)
+Please copy the directory "partree" to the freemind plugins directory (e.g. on Windows: C:\Program Files (x86)\FreeMind\plugins).
 
-partree is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
-
-partree is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License along with partree. If not, see <http://www.gnu.org/licenses/>.
-
-Prerequisites
-=============
-partree components are designed and coded to run as a script under the scripting engine plugin of FreeMind, a program for creating and viewing mindmaps.
-
-Installation
-============
-1. Download and install FreeMind from http://freemind.sourceforge.net.
-2. Unzip the partree installation package to a location of your choice.
-3. Open the file partree_hilfe_de.mm from the installation package and follow the installation instructions.
+Start freemind and enjoy using partree.

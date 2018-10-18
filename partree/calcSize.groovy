@@ -2,9 +2,12 @@
 ** partree - Calculate the functional size of user requirements to a 
 **  software system.
 **
+** Copyright © 2016 Frank Hartel, Splitblue Hartel Software, e-Mail: splitblue@outlook.com
+** for partree itself:
 ** Copyright © 2014 Geert van Wittlaer, Email geert.wittlaer@gmx.de
 **
-** This file is part of partree.
+** This file is part of partree. It was enhanced by Frank Hartel with the capability
+** to show graphical Icons related to the Type and Enhancement 
 **
 ** partree is free software: you can redistribute it and/or modify
 ** it under the terms of the GNU General Public License as published by
@@ -26,7 +29,7 @@
 ** calcSize - This script calculates the functional size for a count whenever
 **   the tree is updated.
 **
-** Version 0.5.0
+** Version 1.0.0
 **
 */
 
@@ -40,18 +43,55 @@ class MyNodeListener implements freemind.modes.ModeController.NodeSelectionListe
 	 * Sent, if a node is changed
 	 * */
 	void onUpdateNodeHook(freemind.modes.MindMapNode node){
-
-	
 		def rootNode = c.getRootNode();
-		def sCountType = rootNode.getAttribute("CountType");
-	
-		switch (sCountType) {
 		
-			case "Enhancement":
+		def totalAdd=0;
+		def totalChange=0;
+		def totalDel=0;
+		def sCountType = rootNode.getAttribute("CountType");
+
+		switch (sCountType) {
 			case "Baseline":		
 				calcSize(rootNode, sCountType);	
 				break;		
-			
+			case "Enhancement": 
+				calcSize(rootNode, sCountType);	
+				
+				def kids = [];
+				def stack = new Stack();
+				stack.push(rootNode.childrenUnfolded());
+				while(!stack.isEmpty()) {
+					def nodes = stack.pop();
+					while(nodes.hasNext()) {
+						def k = nodes.next();
+						kids.add(k);
+						stack.push(k.childrenUnfolded());
+					};
+				};
+				kids.each{
+					def cplx=it.getAttribute("Complexity");
+					if (cplx!=null){
+						c.editAttribute(rootNode,"Method",null);
+					}
+					def val=it.getAttribute("Size");
+					if (val!=null){
+						def what=it.getAttribute("Enhancement");
+						switch(what){
+						case "add": totalAdd+=Integer.parseInt(val);
+							break;
+						case "change": totalChange+=Integer.parseInt(val);
+							break;
+						case "delete": totalDel+=Integer.parseInt(val);
+							break;
+						};
+						
+					};
+				};
+				
+				c.editAttribute(rootNode, "SizeAdd", String.format("%,d", totalAdd));
+				c.editAttribute(rootNode, "SizeChg", String.format("%,d", totalChange));
+				c.editAttribute(rootNode, "SizeDel", String.format("%,d", totalDel));
+				break;
 			case "Development":			
 			default:
 				break;				
@@ -155,7 +195,8 @@ class MyNodeListener implements freemind.modes.ModeController.NodeSelectionListe
 					/* and remove attributes */
 					c.editAttribute(child, "Size", null);
 					c.editAttribute(child, "Complexity", null);	
-					c.editAttribute(child, "Enhancement", null);							
+					c.editAttribute(child, "Enhancement", null);	
+					while(c.removeLastIcon(child)>0);
 					return 0;
 			}
 					
@@ -177,6 +218,7 @@ class MyNodeListener implements freemind.modes.ModeController.NodeSelectionListe
 		
 			/* Make it a "fork" */
 			child.style = "fork";
+			while(c.removeLastIcon(child)>0);
 		
 			/* Loop over all Children */
 			def it = child.childrenUnfolded();		
@@ -194,13 +236,14 @@ class MyNodeListener implements freemind.modes.ModeController.NodeSelectionListe
 			c.editAttribute(child, "Type", null);				
 			c.editAttribute(child, "Complexity", null);	
 			c.editAttribute(child, "Enhancement", null);				
-			
+								
 			return iSize;
 
 		}
-
+		
 	}
 }
+		
 
 /*
 ** Register the hooks - this code was taken from the examples provided by the FreeMind Scripting Engine
